@@ -239,7 +239,7 @@ namespace CSharpPractice5.ViewModel
             get
             {
                 return _sortCommand ?? (_sortCommand = new RelayCommand<object>(
-                           Sort, o => true));
+                           Sort, CanBeSorted));
             }
         }
 
@@ -351,6 +351,14 @@ namespace CSharpPractice5.ViewModel
             TaskList = new ObservableCollection<Task>(GetSorted(tasks));
         }
 
+        private bool CanBeSorted(object obj)
+        {
+            if (!DescendingSort && !AscendingSort) return false;
+            return (IdSort || NameSort || CpuSort || RamPercentSort || RamVolumeSort || ThreadsNumSort || UserSort ||
+                    ActiveSort || StartDateSort);
+
+        }
+
         private List<Task> GetSorted(List<Task> taskList)
         {
             if (AscendingSort)
@@ -435,7 +443,7 @@ namespace CSharpPractice5.ViewModel
             return taskList;
         }
 
-        private void Reset(object obj)
+        private async void Reset(object obj)
         {
             _sortPressed = false;
             AscendingSort = false;
@@ -449,7 +457,9 @@ namespace CSharpPractice5.ViewModel
             ThreadsNumSort = false;
             UserSort = false;
             StartDateSort = false;
-            LoadNewTasks();
+            LoaderManager.Instance.ShowLoader();
+            await BackgroundTask.Run(() => LoadNewTasks());
+            LoaderManager.Instance.HideLoader();
         }
 
         private void ShowThreads(object obj)
@@ -464,12 +474,14 @@ namespace CSharpPractice5.ViewModel
             NavigationManager.Instance.Navigate(ViewType.Modules);
         }
 
-        private void Stop(object obj)
+        private async void Stop(object obj)
         {
             try
             {
                 TaskListLoader.GetProcessById(_selected.ProcessId).Kill();
-                LoadNewTasks();
+                LoaderManager.Instance.ShowLoader();
+                await BackgroundTask.Run(() => LoadNewTasks());
+                LoaderManager.Instance.HideLoader();
             }
             catch (Exception e)
             {

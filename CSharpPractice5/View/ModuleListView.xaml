@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
         <DataGrid Grid.Row="0" IsReadOnly="True" ItemsSource="{Binding Modules, Mode=OneWay}" AutoGenerateColumns="False" ScrollViewer.CanContentScroll="True" >
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Module Name" Binding="{Binding ModileName}" Width="*" ></DataGridTextColumn>
+                <DataGridTextColumn Header="Module Name" Binding="{Binding ModuleName}" Width="*" ></DataGridTextColumn>
                 <DataGridTextColumn Header="File Path" Binding="{Binding FileName}" Width="*" ></DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
